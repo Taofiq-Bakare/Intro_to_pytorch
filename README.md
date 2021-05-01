@@ -1,11 +1,11 @@
 # Intro_to_pytorch
 
-This is a series of beginer level tutorial to masater pytorch.
+This is a series of beginner level tutorial to master pytorch.
 
 ## Project Organization
 
 
-```
+```md
     ├── LICENSE
     ├── README.md          <- The top-level README for developers using this project
     ├── data
