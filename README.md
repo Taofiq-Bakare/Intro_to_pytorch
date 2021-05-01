@@ -13,6 +13,8 @@ This is a series of beginner level tutorial to master pytorch.
     │   ├── interim        <- Intermediate data that has been transformed
     │   ├── processed      <- The final, canonical data sets for modeling
     │   └── raw            <- The original, immutable data dump
+    |
+    |── models             <- Contains different pytorch models.
     │
     │
     ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
