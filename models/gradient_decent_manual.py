@@ -64,8 +64,8 @@ def gradient(x, y, y_pred):
     return np.dot(2*x, y_pred - y).mean()
 
 
-print(f"Prediction before training: f(5) = {forward(5):.3f}")
 # print(f"Prediction before training: f(5) = {forward(5):.3f}")
+print(f"Prediction before training: f(5) = {forward(5):.3f}")
 
 
 # design the forward pass
