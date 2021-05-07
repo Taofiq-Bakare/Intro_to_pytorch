@@ -1,6 +1,13 @@
 # Intro_to_pytorch
 
 This is a series of beginner level tutorial to master pytorch.
+One of the many problems I encountered researching proper tutorial for
+machine learning is finding a tutor that balances the application of 
+machine learning frameworks with the theories.
+I am very pleased to come across [Python engineer](https://github.com/python-engineer);
+his YouTube videos are well explained and he genuinly knows what he's talking about.
+Anyway, I am following the series of tutorials he prepared for [Pytorch](https://github.com/python-engineer/pytorchTutorial),perhaps you may find them illuminating as I did.
+Gluck!
 
 ## Project Organization
 
