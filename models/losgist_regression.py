@@ -52,7 +52,9 @@ X_test = torch.from_numpy(X_test.astype(np.float32))
 y_train = torch.from_numpy(y_train.astype(np.float32))
 y_test = torch.from_numpy(y_test.astype(np.float32))
 
-print(y_train.shape)
+
+y_train = y_train.view(y_train.shape[0], 1)
+y_test = y_test.view(y_test.shape[0], 1)
 
 # Create model
 
@@ -90,7 +92,7 @@ for epoch in range(n_epoch):
     optimizer.zero_grad()
     period = 10
     if (epoch+1) % period == 0:
-        print(f'epoch: {epoch+1}, loss = {loss.item():.4f}')
+        print(f'epoch: {epoch+1}, loss = {error.item():.4f}')
 
 
 with torch.no_grad():
