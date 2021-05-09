@@ -1,51 +1,58 @@
-# An attempt at logistic regression offhand
+# Second offhand run of the logistic regression using cancer data
 
 import torch
-import numpy as np
 import torch.nn as nn
 import sklearn
-from sklearn import datasets
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn import datasets
+import numpy as np
 
-"""[Define the steps needed]
+"""Pytorch workflow
 
-Preprocessing
-    1. Create data
-    2. Get the number of rows and columns
-    3. Train/test split
-    4. Check for null values
-    5. Convert data from numpy to torch.tensor
-
-Creat Pytorch model:
-    1. Define the constants(loss function, optimizer,learning rate)
-    2. Define a class for the model
-    3. Define the forward method
-    4.
+1. Generate and prepare data
+2. Create the model class
+3. Create constants
+4. Train the model in a for loop
+5. Print result
 
 """
 
-# Create the data
-
-
+"""
+1. Generate and prepare data
+    1. Create data from sklearn dataset
+    2. Split the into data and target
+    3. Get the number of samples and features
+    4. Train/test split
+    5. Convert to torch.tensor
+    5. Normalize the data using standardscaler
+    6. Reshap the input features
+"""
+# Load the breast cancer data
 data = datasets.load_breast_cancer()
+
+# Assign data and target
 
 X, y = data.data, data.target
 
-# Create number of data and features
-n_rows, n_features = X.shape
+# Get the number of samples and features
+
+n_sample, n_features = X.shape
 
 # Train/test split
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=123)
+    X, y, random_state=123, test_size=0.20)
 
-# Scale data
+# Normalize data
+
 sc = StandardScaler()
+
 X_train = sc.fit_transform(X_train)
 X_test = sc.fit_transform(X_test)
 
-# Convert data from numpy to torch
+
+# Convert the data to torch format
 
 X_train = torch.from_numpy(X_train.astype(np.float32))
 X_test = torch.from_numpy(X_test.astype(np.float32))
@@ -53,50 +60,87 @@ y_train = torch.from_numpy(y_train.astype(np.float32))
 y_test = torch.from_numpy(y_test.astype(np.float32))
 
 
+# Reshape input data from
+# one row * n_sample columns()
+# To
+# n_sample rows * one column
+
 y_train = y_train.view(y_train.shape[0], 1)
 y_test = y_test.view(y_test.shape[0], 1)
 
-# Create model
+'''
+2. Create the model class
+    1. Create class that inherits from torch.nn.Module
+    2. Create super class
+    3. Define the self.linear regression
+    4. Create the forward method
+    5. Create the loss function
+'''
 
 
 class Model(nn.Module):
-    def __init__(self, n_input_features):
+    def __init__(self, input_features):
         super(Model, self).__init__()
-        self.linear = nn.Linear(n_input_features, 1)
+        self.linear = nn.Linear(input_features, 1)
+        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
-        # sigmoid bcus it is a classification problem(0 or 1)
-        y_pred = torch.sigmoid(self.linear(x))
+        y_pred = self.linear(x)
+        y_pred = self.sigmoid(y_pred)
         return y_pred
 
 
+'''
+3. Create constants
+    1. Select optimizer
+    2. Instantiate number of iterations
+    3. Instantiate learning rate
+    4. Instantiate the model
+    5. Instantiate loss function
+'''
+
+
 model = Model(n_features)
-
-learning_rate = 0.01
-loss = nn.BCELoss()
+n_iteration = 1000
+learning_rate = 1e-2
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
-n_epoch = 100
+criterion = nn.BCELoss()
 
-# Design training loop.
+'''
+4. Train the model in a for loop
+    1. Call the forward method
+    2. Call the loss method
+    3. Call the optimizer
+    4. Update the weights
+    5. Zero the autograd function
+'''
 
-for epoch in range(n_epoch):
-    # Forward pass
-    y_pred = model(X_train)
-    error = loss(y_pred, y_train)
+for epoch in range(n_iteration):
+    forward = model(X_train)
 
-    # Backward pass and update
+    error = criterion(forward, y_train)
+
     error.backward()
     optimizer.step()
-
-    # Zero the grad before new update
     optimizer.zero_grad()
-    period = 10
+
+    period = 100
     if (epoch+1) % period == 0:
-        print(f'epoch: {epoch+1}, loss = {error.item():.4f}')
+        print(f"Epoch: {epoch}, loss: {error.item():.4f}")
 
+'''
+5. Print result
+    1. Prediction before training
+    2. Print epoch, current weights, loss
+    3. Print prediction after training
+    4. Print accuracy
 
+'''
 with torch.no_grad():
     y_predicted = model(X_test)
     y_predicted_cls = y_predicted.round()
     acc = y_predicted_cls.eq(y_test).sum() / float(y_test.shape[0])
-    print(f'accuracy: {acc.item():.4f}')
+    print(f" Accuracy: {acc.item():.4f}")
+    print('\n')
+    print(f" Actual values: {y_test[0:5].flatten()}\n")
+    print(f" Predicted values: {y_predicted_cls[0:5].flatten()}")
